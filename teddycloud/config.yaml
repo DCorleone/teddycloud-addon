@@ -24,4 +24,4 @@ map:
   - data:rw
 options: {}
 schema: {}
-image: "ghcr.io/toniebox-reverse-engineering/teddycloud:tc_v0.6.8_ubuntu"
+image: "ghcr.io/toniebox-reverse-engineering/teddycloud"
