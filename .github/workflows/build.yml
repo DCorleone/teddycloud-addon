@@ -6,11 +6,7 @@ on:
       - main
     paths:
       - 'teddycloud/**'
-  workflow_dispatch:  # Manueller Start möglich
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: dcorleone/teddycloud-addon
+  workflow_dispatch:
 
 jobs:
   build-and-push:
@@ -32,9 +28,13 @@ jobs:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get current date
+        id: date
+        run: echo "date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> $GITHUB_OUTPUT
 
       - name: Build and push (aarch64)
         uses: docker/build-push-action@v5
@@ -42,6 +42,15 @@ jobs:
           context: ./teddycloud
           platforms: linux/arm64
           push: true
+          build-args: |
+            BUILD_FROM=ghcr.io/hassio-addons/ubuntu-base/aarch64:11.0.0
+            BUILD_ARCH=aarch64
+            BUILD_VERSION=0.6.8
+            BUILD_NAME=TeddyCloud
+            BUILD_DESCRIPTION=TeddyCloud Home Assistant Add-on
+            BUILD_REPOSITORY=DCorleone/teddycloud-addon
+            BUILD_DATE=${{ steps.date.outputs.date }}
+            BUILD_REF=${{ github.sha }}
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:0.6.8
+            ghcr.io/dcorleone/teddycloud-addon:latest
+            ghcr.io/dcorleone/teddycloud-addon:0.6.8
