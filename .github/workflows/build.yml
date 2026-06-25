@@ -10,7 +10,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/teddycloud-addon
+  IMAGE_NAME: dcorleone/teddycloud-addon
 
 jobs:
   build-and-push:
