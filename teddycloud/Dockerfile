@@ -3,6 +3,15 @@ FROM ${BUILD_FROM} AS buildenv
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
+# Copy root filesystem
+COPY rootfs /
+
+# Setze Ausführrechte für s6-Scripts
+RUN chmod +x /etc/s6-overlay/s6-rc.d/teddycloud/run \
+    && chmod +x /etc/s6-overlay/s6-rc.d/teddycloud/finish \
+    && chmod +x /etc/s6-overlay/s6-rc.d/nginx/run \
+    && chmod +x /etc/s6-overlay/s6-rc.d/nginx/finish
+
 ARG BUILD_ARCH=aarch64
 ARG TEDDYCLOUD_VERSION="tc_v0.6.8"
 
