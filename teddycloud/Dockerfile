@@ -1,6 +1,8 @@
 FROM ghcr.io/toniebox-reverse-engineering/teddycloud:latest
 
-# Erstelle Symlinks beim Start damit HA-Pfade mit TeddyCloud-Pfaden übereinstimmen
+# IPv6-Fix und Pfad-Symlinks
+COPY rootfs/ /
+
 RUN echo '#!/bin/sh\n\
 mkdir -p /config/teddycloud/certs\n\
 mkdir -p /config/teddycloud/config\n\
