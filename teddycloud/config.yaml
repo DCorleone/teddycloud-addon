@@ -1,0 +1,27 @@
+name: TeddyCloud
+version: "0.6.8"
+slug: teddycloud
+description: TeddyCloud - Open Source Server Ersatz für die Boxine Cloud (v0.6.8)
+url: "https://github.com/toniebox-reverse-engineering/teddycloud"
+arch:
+  - aarch64
+  - amd64
+  - armv7
+init: false
+ingress: true
+ingress_port: 80
+panel_icon: mdi:teddy-bear
+ports:
+  443/tcp: 443
+  80/tcp: null
+  8443/tcp: null
+ports_description:
+  443/tcp: TeddyCloud API (Toniebox Verbindung)
+  80/tcp: TeddyCloud Web Interface (http)
+  8443/tcp: TeddyCloud Web Interface (https)
+map:
+  - config:rw
+  - data:rw
+options: {}
+schema: {}
+image: "ghcr.io/toniebox-reverse-engineering/teddycloud:tc_v0.6.8_ubuntu"
