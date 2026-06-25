@@ -19,8 +19,9 @@ ports_description:
   80/tcp: TeddyCloud Web Interface (http)
   8443/tcp: TeddyCloud Web Interface (https)
 map:
-  - config:rw
-  - data:rw
+  - addon_config:rw
+  - media:rw
+  - share:rw
 options: {}
 schema: {}
 image: "ghcr.io/dcorleone/teddycloud-addon"
