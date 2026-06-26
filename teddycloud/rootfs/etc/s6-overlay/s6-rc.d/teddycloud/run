@@ -5,43 +5,36 @@
 # Runs TeddyCloud
 # ==============================================================================
 bashio::log.info "Starting TeddyCloud..."
-mkdir -p /config/teddycloud
-if [[ -z "$(ls -A /config/teddycloud/)" ]]; then
-   bashio::log.info "Config is empty, creating default config"
-   mkdir -p /config/teddycloud/certs /config/teddycloud/certs/server /config/teddycloud/config
+
+# Erstelle Verzeichnisse in addon_config
+mkdir -p /addon_config/teddycloud/certs/server
+mkdir -p /addon_config/teddycloud/certs/client
+mkdir -p /addon_config/teddycloud/config
+mkdir -p /addon_config/teddycloud/data/content
+mkdir -p /addon_config/teddycloud/data/library
+mkdir -p /addon_config/teddycloud/data/custom_img
+mkdir -p /addon_config/teddycloud/data/firmware
+mkdir -p /addon_config/teddycloud/data/cache
+
+# Migration: Falls alte Daten in /config/teddycloud vorhanden
+if [[ -d /config/teddycloud/certs ]] && [[ ! -L /config/teddycloud/certs ]]; then
+    bashio::log.info "Migrating old certs..."
+    cp -rn /config/teddycloud/certs/. /addon_config/teddycloud/certs/ 2>/dev/null || true
 fi
-if [[ -d /config/certs/ ]]; then
-   bashio::log.info "Old /config/certs path exists; migrating it over to new certs path"
-   mv /config/certs /config/teddycloud/
+if [[ -d /config/teddycloud/config ]] && [[ ! -L /config/teddycloud/config ]]; then
+    bashio::log.info "Migrating old config..."
+    cp -rn /config/teddycloud/config/. /addon_config/teddycloud/config/ 2>/dev/null || true
 fi
-if [[ -d /config/config/ ]]; then
-   bashio::log.info "Old /config/config path exists; migrating it over to new config path"
-   mv /config/config /config/teddycloud/
-fi
-mkdir -p /data/teddycloud
-if [[ -z "$(ls -A /data/teddycloud)" ]]; then
-   bashio::log.info "Data store is empty; creating a new one"
-   mkdir -p /data/teddycloud/content /data/teddycloud/library /data/teddycloud/custom_img /data/teddycloud/firmware /data/teddycloud/cache
-fi
-if [[ -d /config/data/ ]]; then
-   bashio::log.info "Old /config/data path exists; migrating it over to new data path"
-   if [[ -d /config/data/content && -n "$(ls -A /config/data/content)" ]]; then
-     mv /config/data/content/* /data/teddycloud/content/
-   fi
-   if [[ -d /config/data/library && -n "$(ls -A /config/data/library)" ]]; then
-     mv /config/data/library/* /data/teddycloud/library/
-   fi
-   if [[ -d /config/data/firmware && -n "$(ls -A /config/data/firmware)" ]]; then
-     mv /config/data/firmware/* /data/teddycloud/firmware/
-   fi
-   if [[ -d /config/data/cache && -n "$(ls -A /config/data/cache)" ]]; then
-     mv /config/data/cache/* /data/teddycloud/cache/
-   fi
-   if [[ -d /config/data/www/custom_img && -n "$(ls -A /config/data/www/custom_img)" ]]; then
-     mv /config/data/www/custom_img/* /data/teddycloud/custom_img/
-   fi
-   rm -rf /config/data
-   bashio::log.info "Migration successful. Deleted old /config/data path"
-fi
+
+# Symlinks von TeddyCloud-Pfaden auf addon_config
+rm -rf /teddycloud/certs && ln -sf /addon_config/teddycloud/certs /teddycloud/certs
+rm -rf /teddycloud/config && ln -sf /addon_config/teddycloud/config /teddycloud/config
+rm -rf /teddycloud/data/content && ln -sf /addon_config/teddycloud/data/content /teddycloud/data/content
+rm -rf /teddycloud/data/library && ln -sf /addon_config/teddycloud/data/library /teddycloud/data/library
+rm -rf /teddycloud/data/firmware && ln -sf /addon_config/teddycloud/data/firmware /teddycloud/data/firmware
+rm -rf /teddycloud/data/cache && ln -sf /addon_config/teddycloud/data/cache /teddycloud/data/cache
+rm -rf /teddycloud/data/www/custom_img && ln -sf /addon_config/teddycloud/data/custom_img /teddycloud/data/www/custom_img
+
+bashio::log.info "All paths configured, starting TeddyCloud..."
 cd /teddycloud || exit
 exec /usr/local/bin/teddycloud
