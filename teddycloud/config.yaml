@@ -8,6 +8,7 @@ arch:
   - amd64
 init: false
 ingress: true
+ingress_stream: true
 ingress_port: 8099
 panel_icon: mdi:teddy-bear
 ports:
@@ -20,7 +21,6 @@ ports_description:
   8443/tcp: TeddyCloud Web Interface (https)
 map:
   - addon_config:rw
-  - data:rw
   - media:rw
   - share:rw
 options: {}
