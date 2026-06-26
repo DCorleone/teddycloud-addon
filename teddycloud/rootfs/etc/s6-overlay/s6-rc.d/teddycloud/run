@@ -3,38 +3,35 @@
 # ==============================================================================
 # Home Assistant Community Add-on: TeddyCloud
 # Runs TeddyCloud
+# Alle Daten werden unter /config/teddycloud/ gespeichert (addon_config:rw)
 # ==============================================================================
+
 bashio::log.info "Starting TeddyCloud..."
 
-# Erstelle Verzeichnisse in addon_config
-mkdir -p /addon_config/teddycloud/certs/server
-mkdir -p /addon_config/teddycloud/certs/client
-mkdir -p /addon_config/teddycloud/config
-mkdir -p /addon_config/teddycloud/data/content
-mkdir -p /addon_config/teddycloud/data/library
-mkdir -p /addon_config/teddycloud/data/custom_img
-mkdir -p /addon_config/teddycloud/data/firmware
-mkdir -p /addon_config/teddycloud/data/cache
+# Erstelle alle Verzeichnisse unter /config/teddycloud/ (addon_config)
+mkdir -p /config/teddycloud/certs/server
+mkdir -p /config/teddycloud/certs/client
+mkdir -p /config/teddycloud/config
+mkdir -p /config/teddycloud/data/content
+mkdir -p /config/teddycloud/data/library
+mkdir -p /config/teddycloud/data/custom_img
+mkdir -p /config/teddycloud/data/firmware
+mkdir -p /config/teddycloud/data/cache
+mkdir -p /config/teddycloud/data/plugins
 
-# Migration: Falls alte Daten in /config/teddycloud vorhanden
-if [[ -d /config/teddycloud/certs ]] && [[ ! -L /config/teddycloud/certs ]]; then
-    bashio::log.info "Migrating old certs..."
-    cp -rn /config/teddycloud/certs/. /addon_config/teddycloud/certs/ 2>/dev/null || true
-fi
-if [[ -d /config/teddycloud/config ]] && [[ ! -L /config/teddycloud/config ]]; then
-    bashio::log.info "Migrating old config..."
-    cp -rn /config/teddycloud/config/. /addon_config/teddycloud/config/ 2>/dev/null || true
-fi
+# Symlinks: TeddyCloud-Pfade → /config/teddycloud/
+# certs und config direkt
+rm -rf /teddycloud/certs && ln -sf /config/teddycloud/certs /teddycloud/certs
+rm -rf /teddycloud/config && ln -sf /config/teddycloud/config /teddycloud/config
 
-# Symlinks von TeddyCloud-Pfaden auf addon_config
-rm -rf /teddycloud/certs && ln -sf /addon_config/teddycloud/certs /teddycloud/certs
-rm -rf /teddycloud/config && ln -sf /addon_config/teddycloud/config /teddycloud/config
-rm -rf /teddycloud/data/content && ln -sf /addon_config/teddycloud/data/content /teddycloud/data/content
-rm -rf /teddycloud/data/library && ln -sf /addon_config/teddycloud/data/library /teddycloud/data/library
-rm -rf /teddycloud/data/firmware && ln -sf /addon_config/teddycloud/data/firmware /teddycloud/data/firmware
-rm -rf /teddycloud/data/cache && ln -sf /addon_config/teddycloud/data/cache /teddycloud/data/cache
-rm -rf /teddycloud/data/www/custom_img && ln -sf /addon_config/teddycloud/data/custom_img /teddycloud/data/www/custom_img
+# data/* Unterverzeichnisse
+rm -rf /teddycloud/data/content && ln -sf /config/teddycloud/data/content /teddycloud/data/content
+rm -rf /teddycloud/data/library && ln -sf /config/teddycloud/data/library /teddycloud/data/library
+rm -rf /teddycloud/data/firmware && ln -sf /config/teddycloud/data/firmware /teddycloud/data/firmware
+rm -rf /teddycloud/data/cache && ln -sf /config/teddycloud/data/cache /teddycloud/data/cache
+rm -rf /teddycloud/data/www/custom_img && ln -sf /config/teddycloud/data/custom_img /teddycloud/data/www/custom_img
+rm -rf /teddycloud/data/www/plugins && ln -sf /config/teddycloud/data/plugins /teddycloud/data/www/plugins
 
-bashio::log.info "All paths configured, starting TeddyCloud..."
+bashio::log.info "All paths linked to /config/teddycloud/"
 cd /teddycloud || exit
 exec /usr/local/bin/teddycloud
