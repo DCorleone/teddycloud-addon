@@ -8,7 +8,7 @@ arch:
   - amd64
 init: false
 ingress: true
-ingress_port: 80
+ingress_port: 8099
 panel_icon: mdi:teddy-bear
 ports:
   443/tcp: 443
